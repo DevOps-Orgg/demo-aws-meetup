@@ -11,21 +11,21 @@
      route_tables: "{{ public_subnet_rt }}"
    register: vpc
 
- - name: VPC | Write vpc id to file inside the tmp directory
+ - name: VPC | Write vpc id to file inside the vars directory
    shell: echo "{{ vpc.vpc_id }}" > "{{ vpc_name }}-vpc-info.yml"
    args:
-     chdir: tmp/
+     chdir: vars/
 
- - name: VPC | Write public and private subnets id to files inside the tmp directory  
+ - name: VPC | Write public and private subnets id to files inside the vars directory  
    shell: echo "{{ item.id }}" > "{{ item.resource_tags.Name }}.yml"
    args:
-     chdir: tmp/
+     chdir: vars/
    with_items: vpc.subnets
 
  - name: VPC | Set the public and private subnet id as facts
    set_fact:
-     vpc_id: "{{ lookup('file', 'tmp/' + vpc_name + '-vpc-info.yml') }}"
-     public_subnet_1: "{{ lookup('file', 'tmp/' + vpc_name + '-' + public_az_1 + '-public-subnet.yml') }}"
-     public_subnet_2: "{{ lookup('file', 'tmp/' + vpc_name + '-' + public_az_2 + '-public-subnet.yml') }}"
-     private_subnet: "{{ lookup('file', 'tmp/' + vpc_name + '-' + private_az + '-private-subnet.yml') }}"
+     vpc_id: "{{ lookup('file', 'vars/' + vpc_name + '-vpc-info.yml') }}"
+     public_subnet_1: "{{ lookup('file', 'vars/' + vpc_name + '-' + public_az_1 + '-public-subnet.yml') }}"
+     public_subnet_2: "{{ lookup('file', 'vars/' + vpc_name + '-' + public_az_2 + '-public-subnet.yml') }}"
+     private_subnet: "{{ lookup('file', 'vars/' + vpc_name + '-' + private_az + '-private-subnet.yml') }}"
 
