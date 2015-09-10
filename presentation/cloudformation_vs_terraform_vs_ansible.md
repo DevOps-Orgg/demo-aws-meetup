@@ -25,10 +25,10 @@ Still likes to get his hands dirty.
 
 ---
 
-# [fit] Cloudformation vs
-# [fit] Terraform vs
-# [fit]Ansible
-# [fit] For AWS provisioning
+# [fit] Cloudformation
+# [fit] <> Terraform
+# [fit] <> Ansible
+# [fit] for AWS provisioning
 
 ---
 
