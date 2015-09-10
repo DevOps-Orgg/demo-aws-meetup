@@ -14,9 +14,9 @@
 
 Still likes to get his hands dirty.
 <br>
-* [github.com/gtheys](https://github.com/gtheys)
-* [twitter.com/toadi](https://twitter.com/toadi)
-* [geerttheys.com](http://geerttheys.com)
+![inline](github.png) [github.com/gtheys](https://github.com/gtheys)
+![inline](twitter.png) [twitter.com/toadi](https://twitter.com/toadi)
+![inline](home.png) [geerttheys.com](http://geerttheys.com)
 
 ---
 
