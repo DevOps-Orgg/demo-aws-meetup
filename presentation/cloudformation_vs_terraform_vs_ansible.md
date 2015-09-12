@@ -1,4 +1,5 @@
 # #8 Forming clouds: CloudFormation vs Ansible vs TerraForm
+![fit](meetup.png)
 
 ---
 
@@ -44,6 +45,13 @@ Still likes to get his hands dirty.
 # [fit] And disadvantages
 
 --- 
+
+# Before we start!
+
+![inline](automation.png)
+
+
+---
 
 # [fit] Lets compare
 
@@ -144,9 +152,16 @@ Up to date versions and on linux use `pip install`
 
 # Safe to use?
 
+Terraform and ansible has `--dry-run`mode
+
 ---
 
 # Performant?
+
+* TF: 
+    * Use dependency graph and parrallelizes as much as possible
+    * Partial refresh before changes
+    * Destroy ordering
 
 ---
 
@@ -156,13 +171,19 @@ Up to date versions and on linux use `pip install`
 
 # Do I feel safe
 
+* TF: 
+    * Partial State get's stored (eg. sg gets created not the rules, next run will fix this)
+    * Create before destroy
+
+---
+
+# Issues?
+
+* TF: Not yet good working on existing interfaces
+
 ---
 
 # Good deploying more advanced infrastructure?
-
----
-
-# Performance?
 
 ---
 
