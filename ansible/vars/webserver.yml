@@ -1,4 +1,7 @@
 ---
+ ENV: demo
+ application: demo-app
+ server_role: web
  web_instance_type: t2.micro
 
  web_security_groups:
