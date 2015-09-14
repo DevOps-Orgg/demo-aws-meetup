@@ -1,0 +1,389 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "Cloudformation build",
+
+  "Mappings" : {
+    "SubnetConfig" : {
+      "VPC"      : { "CIDR" : "10.2.0.0/16" },
+      "Public1a" : { "CIDR" : "10.2.0.0/24" },
+      "Public1b" : { "CIDR" : "10.2.2.0/24" },
+      "Private1c" : { "CIDR" : "10.2.4.0/24" },
+      "Private1d" : { "CIDR" : "10.2.6.0/24" }
+    },
+    "SubnetAZ" : {
+      "1a" : { "AZ" : "eu-west-1a" },
+      "1b" : { "AZ" : "eu-west-1b" },
+      "1c" : { "AZ" : "eu-west-1c" }
+    }
+  },
+
+  "Parameters" : {
+    "opKeyName" : {
+      "Type" : "String",
+      "Description" : "Enter the operator's key name"
+    },
+    "imageami" : {
+      "Type" : "String",
+      "Description" : "Image AMI",
+      "Default" : "ami-9d2f0fea"
+    },
+    "environmentType" : {
+      "Type" : "String",
+      "Default" : "production",
+      "AllowedValues" : ["production","staging","development"],
+      "Description" : "What kind of environment are you deploying: choose between production (default), staging or development."
+    },
+    "projectName" : {
+      "Type" : "String",
+      "Description" : "What is the name of the project"
+    },
+    "webInstanceType" : {
+      "Type" : "String",
+      "Default" : "t2.micro",
+      "Description" : "Enter instance type"
+    },
+    "elb01Name" : {
+      "Type" : "String",
+      "Description" : "Enter the name for elb01. Example: project-elb01"
+    },
+    "rds01Name" : {
+      "Type" : "String",
+      "Description" : "Enter the name for rds01. Example: project-rds01"
+    },
+    "rds01InstanceType" : {
+      "Type" : "String",
+      "Default" : "db.t2.micro",
+      "Description" : "Enter instance size"
+    },
+    "rds01Password" : {
+      "Type" : "String",
+      "Description" : "Enter the root password for rds01"
+    }
+  },
+
+  "Resources" : {
+    "VPC" : {
+      "Type" : "AWS::EC2::VPC",
+      "Properties" : {
+        "CidrBlock" : { "Fn::FindInMap" : [ "SubnetConfig", "VPC", "CIDR" ]},
+        "EnableDnsHostnames" : "true",
+        "EnableDnsSupport" : "true",
+        "Tags" : [
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId" } },
+          {"Key" : "Environment", "Value" : { "Ref" : "environmentType" } },
+          {"Key" : "Project", "Value" : { "Ref" : "projectName" } },
+          {"Key" : "Name", "Value" : { "Fn::Join" : [ "-", [ "vpc", { "Ref" : "projectName" }, { "Ref" : "environmentType" }] ] } }
+        ]
+      }
+    },
+
+    "PublicSubnet1a" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "AvailabilityZone" : { "Fn::FindInMap" : [ "SubnetAZ", "1a", "AZ" ]},
+        "VpcId" : { "Ref" : "VPC" },
+        "CidrBlock" : { "Fn::FindInMap" : [ "SubnetConfig", "Public1a", "CIDR" ]},
+        "MapPublicIpOnLaunch" : true,
+        "Tags" : [
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId" } },
+          {"Key" : "Environment", "Value" : { "Ref" : "environmentType" } },
+          {"Key" : "Project", "Value" : { "Ref" : "projectName" } },
+          {"Key" : "Name", "Value" : { "Fn::Join" : [ "-", [ "Publicsubnet1a", { "Ref" : "projectName" }, { "Ref" : "environmentType" }] ] } }
+        ]
+      }
+    },
+
+    "PublicSubnet1b" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "AvailabilityZone" : { "Fn::FindInMap" : [ "SubnetAZ", "1b", "AZ" ]},
+        "VpcId" : { "Ref" : "VPC" },
+        "CidrBlock" : { "Fn::FindInMap" : [ "SubnetConfig", "Public1b", "CIDR" ]},
+        "MapPublicIpOnLaunch" : true,
+        "Tags" : [
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId" } },
+          {"Key" : "Environment", "Value" : { "Ref" : "environmentType" } },
+          {"Key" : "Project", "Value" : { "Ref" : "projectName" } },
+          {"Key" : "Name", "Value" : { "Fn::Join" : [ "-", [ "Publicsubnet1b", { "Ref" : "projectName" }, { "Ref" : "environmentType" }] ] } }
+        ]
+      }
+    },
+
+    "PrivateSubnet1c" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "AvailabilityZone" : { "Fn::FindInMap" : [ "SubnetAZ", "1c", "AZ" ]},
+        "VpcId" : { "Ref" : "VPC" },
+        "CidrBlock" : { "Fn::FindInMap" : [ "SubnetConfig", "Private1c", "CIDR" ]},
+        "Tags" : [
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId" } },
+          {"Key" : "Environment", "Value" : { "Ref" : "environmentType" } },
+          {"Key" : "Project", "Value" : { "Ref" : "projectName" } },
+          {"Key" : "Name", "Value" : { "Fn::Join" : [ "-", [ "Privatesubnet1c", { "Ref" : "projectName" }, { "Ref" : "environmentType" }] ] } }
+        ]
+      }
+    },
+
+    "PrivateSubnet1d" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "AvailabilityZone" : { "Fn::FindInMap" : [ "SubnetAZ", "1b", "AZ" ]},
+        "VpcId" : { "Ref" : "VPC" },
+        "CidrBlock" : { "Fn::FindInMap" : [ "SubnetConfig", "Private1d", "CIDR" ]},
+        "Tags" : [
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId" } },
+          {"Key" : "Environment", "Value" : { "Ref" : "environmentType" } },
+          {"Key" : "Project", "Value" : { "Ref" : "projectName" } },
+          {"Key" : "Name", "Value" : { "Fn::Join" : [ "-", [ "Privatesubnet1d", { "Ref" : "projectName" }, { "Ref" : "environmentType" }] ] } }
+        ]
+      }
+    },
+
+    "PublicRoute" : {
+      "Type" : "AWS::EC2::Route",
+      "DependsOn" : "GatewayToInternet",
+      "Properties" : {
+        "RouteTableId" : { "Ref" : "PublicRouteTable" },
+        "DestinationCidrBlock" : "0.0.0.0/0",
+        "GatewayId" : { "Ref" : "InternetGateway" }
+      }
+    },
+
+    "PublicRouteTable" : {
+      "Type" : "AWS::EC2::RouteTable",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "Tags" : [
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId" } },
+          {"Key" : "Environment", "Value" : { "Ref" : "environmentType" } },
+          {"Key" : "Project", "Value" : { "Ref" : "projectName" } }
+        ]
+      }
+    },
+
+    "PublicSubnet1aRouteTableAssociation" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "SubnetId" : { "Ref" : "PublicSubnet1a" },
+        "RouteTableId" : { "Ref" : "PublicRouteTable" }
+      }
+    },
+
+    "PublicSubnet1bRouteTableAssociation" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "SubnetId" : { "Ref" : "PublicSubnet1b" },
+        "RouteTableId" : { "Ref" : "PublicRouteTable" }
+      }
+    },
+
+    "InternetGateway" : {
+      "Type" : "AWS::EC2::InternetGateway",
+      "Properties" : {
+        "Tags" : [
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId" } },
+          {"Key" : "Environment", "Value" : { "Ref" : "environmentType" } },
+          {"Key" : "Project", "Value" : { "Ref" : "projectName" } }
+        ]
+      }
+    },
+
+    "GatewayToInternet" : {
+      "Type" : "AWS::EC2::VPCGatewayAttachment",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "InternetGatewayId" : { "Ref" : "InternetGateway" }
+      }
+    },
+
+    "sgelb" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "ELB security rules",
+        "VpcId" : { "Ref" : "VPC" },
+        "SecurityGroupIngress" : [
+          {"IpProtocol" : "tcp", "FromPort" : "80", "ToPort" : "80", "CidrIp" : "0.0.0.0/0"}
+        ],
+        "Tags" : [
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId" } },
+          {"Key" : "Environment", "Value" : { "Ref" : "environmentType" } },
+          {"Key" : "Project", "Value" : { "Ref" : "projectName" } },
+          {"Key" : "Name", "Value" : { "Fn::Join" : [ "-", [ "sgelb", { "Ref" : "projectName" }, { "Ref" : "environmentType" }] ] } }
+        ]
+      }
+    },
+
+    "sgweb" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "WEB security rules",
+        "VpcId" : { "Ref" : "VPC" },
+        "SecurityGroupIngress" : [
+          {"IpProtocol" : "tcp", "FromPort" : "80", "ToPort" : "80", "CidrIp" : "0.0.0.0/0"},
+          {"IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : "0.0.0.0/0"}
+        ],
+        "Tags" : [
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId" } },
+          {"Key" : "Environment", "Value" : { "Ref" : "environmentType" } },
+          {"Key" : "Project", "Value" : { "Ref" : "projectName" } },
+          {"Key" : "Name", "Value" : { "Fn::Join" : [ "-", [ "sgweb", { "Ref" : "projectName" }, { "Ref" : "environmentType" }] ] } }
+        ]
+      }
+    },
+
+    "sgrds" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+       "Properties" : {
+            "GroupDescription" : "RDS security rules",
+            "VpcId" : { "Ref" : "VPC" },
+            "SecurityGroupIngress" : [
+                {"IpProtocol" : "tcp", "FromPort" : "3306", "ToPort" : "3306", "SourceSecurityGroupId" : { "Ref" : "sgweb" }}
+            ],
+            "Tags" : [
+              {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId" } },
+              {"Key" : "Environment", "Value" : { "Ref" : "environmentType" } },
+              {"Key" : "Project", "Value" : { "Ref" : "projectName" } },
+              {"Key" : "Name", "Value" : { "Fn::Join" : [ "-", [ "sgrds", { "Ref" : "projectName" }, { "Ref" : "environmentType" }] ] } }
+            ]
+        }
+    },
+
+   "RDSDBSubnetGroup" : {
+          "Type" : "AWS::RDS::DBSubnetGroup",
+          "Properties" : {
+              "DBSubnetGroupDescription" : "Subnets available for the RDS DB Instance",
+              "SubnetIds" : [ { "Ref" : "PrivateSubnet1c" }, { "Ref" : "PrivateSubnet1d" }]
+          }
+    },
+
+    "rds01" : {
+      "Type" : "AWS::RDS::DBInstance",
+      "Properties" : {
+        "AllocatedStorage" : "10",
+        "AllowMajorVersionUpgrade" : false,
+        "AutoMinorVersionUpgrade" : true,
+        "BackupRetentionPeriod" : "14",
+        "DBInstanceClass" : { "Ref" : "rds01InstanceType" },
+        "DBInstanceIdentifier" : { "Ref" : "rds01Name" },
+        "DBSubnetGroupName" : { "Ref" : "RDSDBSubnetGroup" },
+        "Engine" : "MySQL",
+        "EngineVersion" : "5.6",
+        "MasterUsername" : "root",
+        "MasterUserPassword" : { "Ref" : "rds01Password" },
+        "MultiAZ" : false,
+        "Port" : "3306",
+        "VPCSecurityGroups" : [ {"Ref" : "sgrds"} ],
+        "Tags" : [
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId" } },
+          {"Key" : "Environment", "Value" : { "Ref" : "environmentType" } },
+          {"Key" : "Project", "Value" : { "Ref" : "projectName" } },
+          {"Key" : "Name", "Value" : { "Fn::Join" : [ "-", [ "rds01", { "Ref" : "projectName" }, { "Ref" : "environmentType" }] ] } }
+        ]
+      }
+    },
+
+    "web01" : {
+      "Type" : "AWS::EC2::Instance",
+      "Properties" : {
+        "AvailabilityZone" : "eu-west-1a",
+        "ImageId" : { "Ref" : "imageami" },
+        "InstanceType" : { "Ref" : "webInstanceType" },
+        "KeyName" : { "Ref": "opKeyName"},
+        "SubnetId" : { "Ref" : "PublicSubnet1a" },
+        "BlockDeviceMappings" : [ {
+          "DeviceName" : "/dev/sda1",
+          "Ebs" : {
+            "VolumeType" : "standard",
+            "DeleteOnTermination" : "false",
+            "VolumeSize" : "8"
+          }
+          } ],
+        "Tags" : [
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId" } },
+          {"Key" : "Environment", "Value" : { "Ref" : "environmentType" } },
+          {"Key" : "Project", "Value" : { "Ref" : "projectName" } },
+          {"Key" : "Name", "Value" : { "Fn::Join" : [ "-", [ "web01", { "Ref" : "projectName" }, { "Ref" : "environmentType" }] ] } }
+        ],
+        "SecurityGroupIds" : [ {"Ref" : "sgweb"} ],
+        "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
+          "#!/bin/bash\n",
+          "/usr/bin/logger -t autobootstrap \"Run apt-get update\"\n",
+          "sudo apt-get update\n",
+          "/usr/bin/logger -t autobootstrap \"Install nginx\"\n",
+          "sudo apt-get install nginx -y\n",
+          "/usr/bin/logger -t autobootstrap \"Start nginx\"\n",
+          "sudo service nginx start\n"
+        ]]}}
+      }
+    },
+
+    "web02" : {
+      "Type" : "AWS::EC2::Instance",
+      "Properties" : {
+        "AvailabilityZone" : "eu-west-1a",
+        "ImageId" : { "Ref" : "imageami" },
+        "InstanceType" : { "Ref" : "webInstanceType" },
+        "KeyName" : { "Ref": "opKeyName"},
+        "SubnetId" : { "Ref" : "PublicSubnet1a" },
+        "BlockDeviceMappings" : [ {
+          "DeviceName" : "/dev/sda1",
+          "Ebs" : {
+            "VolumeType" : "standard",
+            "DeleteOnTermination" : "false",
+            "VolumeSize" : "8"
+          }
+          } ],
+        "Tags" : [
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId" } },
+          {"Key" : "Environment", "Value" : { "Ref" : "environmentType" } },
+          {"Key" : "Project", "Value" : { "Ref" : "projectName" } },
+          {"Key" : "Name", "Value" : { "Fn::Join" : [ "-", [ "web02", { "Ref" : "projectName" }, { "Ref" : "environmentType" }] ] } }
+        ],
+        "SecurityGroupIds" : [ {"Ref" : "sgweb"} ],
+        "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
+          "#!/bin/bash\n",
+          "/usr/bin/logger -t autobootstrap \"Run apt-get update\"\n",
+          "sudo apt-get update\n",
+          "/usr/bin/logger -t autobootstrap \"Install nginx\"\n",
+          "sudo apt-get install nginx -y\n",
+          "/usr/bin/logger -t autobootstrap \"Start nginx\"\n",
+          "sudo service nginx start\n"
+        ]]}}
+      }
+    },
+
+    "elb01" : {
+      "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
+      "Properties": {
+        "CrossZone" : true,
+        "HealthCheck" : {
+          "Target": "HTTP:80/",
+          "HealthyThreshold" : "2",
+          "UnhealthyThreshold" : "4",
+          "Interval" : "30",
+          "Timeout" : "20"
+        },
+        "ConnectionDrainingPolicy": {
+          "Enabled" : "true",
+          "Timeout" : "45"
+        },
+        "LoadBalancerName" : { "Ref" : "elb01Name" },
+        "Instances" : [ { "Ref" : "web01" }, { "Ref" : "web02" } ],
+        "Listeners" : [ {
+          "LoadBalancerPort" : "80",
+          "InstancePort" : "80",
+          "Protocol" : "HTTP"
+          } ],
+        "SecurityGroups" : [ {"Ref" : "sgelb"} ],
+        "Subnets" : [ { "Ref" : "PublicSubnet1a" }, { "Ref" : "PublicSubnet1b" }],
+        "Tags" : [
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId" } },
+          {"Key" : "Environment", "Value" : { "Ref" : "environmentType" } },
+          {"Key" : "Project", "Value" : { "Ref" : "projectName" } },
+          {"Key" : "Name", "Value" : { "Fn::Join" : [ "-", [ "elb01", { "Ref" : "projectName" }, { "Ref" : "environmentType" }] ] } }
+        ]
+      }
+    }
+  }
+}
