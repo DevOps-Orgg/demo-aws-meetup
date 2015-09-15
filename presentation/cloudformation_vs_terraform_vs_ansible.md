@@ -193,7 +193,7 @@ Up to date versions and on linux use `pip install`
 
 ---
 
-![fit](safety.jpg)
+![](safety.jpg)
 # [fit]Safe to use?
 
 ### [fit] Terraform and Ansible have a `plan` or `--dry-run` mode
