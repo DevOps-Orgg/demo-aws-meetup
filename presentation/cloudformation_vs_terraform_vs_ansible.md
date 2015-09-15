@@ -70,7 +70,7 @@ Likes to experiment.
 
 ---
 
-# Example 1:
+# CloudFormation:
 
 ```
 "web01" : {
@@ -111,7 +111,7 @@ Likes to experiment.
 
 ---
 
-# Example 2:
+# Terraform:
 
 ```
 resource "aws_instance" "web" {
@@ -143,7 +143,7 @@ resource "template_file" "metadata_web" {
 
 ---
 
-# Example 3:
+# Ansible:
 
 ```
  - name: WebServer | Create the WebServer Instance(s)
@@ -201,11 +201,14 @@ Terraform and Ansible have a `plan` or `--dry-run` mode
 
 # Performant?
 
+* CloudFormation:
+    * Parallelizes as much as possible
+
 * Terraform:
     * Use dependency graph and parallelizes as much as possible
     * Partial refresh before changes
     * Destroy ordering
-
+    
 ---
 
 # How do they keep state?
@@ -214,25 +217,26 @@ Terraform and Ansible have a `plan` or `--dry-run` mode
 
 # Do I feel safe
 
+* Cloudformation:
+    * State is stored on AWS
+    * Start to pray when you run it
+    * Roll back on fail
+
 * Terraform:
     * Partial State get's stored on error (eg. sg gets created not the rules, next run will fix this)
     * Create before destroy
 
-* Cloudformation:
-    * State is stored on AWS
-    * Start to pray when you run it
-    
 ---
 
 # Issues?
 
+* Cloudformation:
+    * JSON
+    * No `plan` mode
+
 * Terraform:
     * Not yet good working on existing interfaces
     * No full coverage of AWS
-
-* Cloudformation:
-    * JSON
-    * No plan mode
 
 ---
 
