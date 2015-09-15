@@ -21,9 +21,17 @@ Still likes to get his hands dirty.
 
 ---
 
-# Mattias 
+# Mattias
 
+![left](mattiasgees.jpg)
 
+*Cloud Engineer @skyscrapers*
+
+Likes to experiment.
+<br>
+![inline](github.png) [github.com/mattiasgees](https://github.com/mattiasgees)
+![inline](twitter.png) [twitter.com/mattiasgees](https://twitter.com/mattiasgees)
+![inline](home.png) [blog.mattiasgees.be](http://blog.mattiasgees.be)
 ---
 
 # [fit] Cloudformation
@@ -44,7 +52,7 @@ Still likes to get his hands dirty.
 
 # [fit] And disadvantages
 
---- 
+---
 
 # Before we start!
 
@@ -55,7 +63,7 @@ Still likes to get his hands dirty.
 
 # [fit] Lets compare
 
---- 
+---
 
 # [fit] Simple syntax?
 
@@ -76,8 +84,8 @@ resource "aws_instance" "webserver" {
   subnet_id = "${element(split(",", var.subnets), 0)}"
   key_name  = "${var.key_name}"
   security_groups  = ["${var.sg_all}","${aws_security_group.sg_tools.id}"]
-  user_data = "#!/bin/bash\n/bin/bash <(/usr/bin/wget -qO- 
-  https://raw.githubusercontent.com/skyscrapers/bootstrap/master/autobootstrap.sh) 
+  user_data = "#!/bin/bash\n/bin/bash <(/usr/bin/wget -qO-
+  https://raw.githubusercontent.com/skyscrapers/bootstrap/master/autobootstrap.sh)
   -p puppetmaster -h webserver01 -f webserver01.fqdn.com -t \"UTC\""
 
   root_block_device {
@@ -98,7 +106,7 @@ resource "aws_instance" "webserver" {
 }
 ```
 
---- 
+---
 
 # Example 3:
 
@@ -132,7 +140,7 @@ resource "aws_instance" "webserver" {
 
 # [fit] Which one was the easiest to read?
 
---- 
+---
 
 # Easy to install?
 
@@ -158,7 +166,7 @@ Terraform and ansible has `--dry-run`mode
 
 # Performant?
 
-* TF: 
+* TF:
     * Use dependency graph and parrallelizes as much as possible
     * Partial refresh before changes
     * Destroy ordering
@@ -171,7 +179,7 @@ Terraform and ansible has `--dry-run`mode
 
 # Do I feel safe
 
-* TF: 
+* TF:
     * Partial State get's stored (eg. sg gets created not the rules, next run will fix this)
     * Create before destroy
 
@@ -189,7 +197,7 @@ Terraform and ansible has `--dry-run`mode
 
 # Support?
 
---- 
+---
 
 # Do you look cool when using it?
 
@@ -202,5 +210,3 @@ Terraform and ansible has `--dry-run`mode
 # Do we recommend 1?
 
 ---
-
-
