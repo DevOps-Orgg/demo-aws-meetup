@@ -199,16 +199,14 @@ Up to date versions and on linux use `pip install`
 ### [fit] Terraform and Ansible have a `plan` or `--dry-run` mode
 
 ---
-
+![left fit](compiling.png)
 # Performant?
-
 * CloudFormation:
     * Parallelizes as much as possible
-
 * Terraform:
     * Use dependency graph and parallelizes as much as possible
     * Partial refresh before changes
-    * Destroy ordering
+* Ansible: Forks? SSH tuning... Not really
 
 ---
 
@@ -241,7 +239,7 @@ Up to date versions and on linux use `pip install`
 
 ---
 
-# Good deploying more advanced infrastructure?
+# Legacy projects?
 
 ---
 
@@ -255,6 +253,7 @@ Up to date versions and on linux use `pip install`
 
 # Do I want to use it?
 
+* Destroy ordering
 ---
 
 # Do we recommend 1?
