@@ -32,6 +32,7 @@ Likes to experiment.
 ![inline](github.png) [github.com/mattiasgees](https://github.com/mattiasgees)
 ![inline](twitter.png) [twitter.com/mattiasgees](https://twitter.com/mattiasgees)
 ![inline](home.png) [blog.mattiasgees.be](http://blog.mattiasgees.be)
+
 ---
 
 # [fit] Cloudformation
@@ -71,38 +72,72 @@ Likes to experiment.
 
 # Example 1:
 
-Cloudformation code block
+```
+"web01" : {
+  "Type" : "AWS::EC2::Instance",
+  "Properties" : {
+    "AvailabilityZone" : "eu-west-1a",
+    "ImageId" : { "Ref" : "imageami" },
+    "InstanceType" : { "Ref" : "webInstanceType" },
+    "KeyName" : { "Ref": "opKeyName"},
+    "SubnetId" : { "Ref" : "PublicSubnet1a" },
+    "BlockDeviceMappings" : [ {
+      "DeviceName" : "/dev/sda1",
+      "Ebs" : {
+        "VolumeType" : "standard",
+        "DeleteOnTermination" : "false",
+        "VolumeSize" : "8"
+      }
+    } ],
+    "Tags" : [
+      {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId" } },
+      {"Key" : "Environment", "Value" : { "Ref" : "environmentType" } },
+      {"Key" : "Project", "Value" : { "Ref" : "projectName" } },
+      {"Key" : "Name", "Value" : { "Fn::Join" : [ "-", [ "web01", { "Ref" : "projectName" }, { "Ref" : "environmentType" }] ] } }
+    ],
+    "SecurityGroupIds" : [ {"Ref" : "sgweb"} ],
+    "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
+      "#!/bin/bash\n",
+      "/usr/bin/logger -t autobootstrap \"Run apt-get update\"\n",
+      "sudo apt-get update\n",
+      "/usr/bin/logger -t autobootstrap \"Install nginx\"\n",
+      "sudo apt-get install nginx -y\n",
+      "/usr/bin/logger -t autobootstrap \"Start nginx\"\n",
+      "sudo service nginx start\n"
+    ]]}}
+  }
+},
+```
 
 ---
 
 # Example 2:
 
 ```
-resource "aws_instance" "webserver" {
+resource "aws_instance" "web" {
+  count = "${var.web_nodes}"
   ami = "${var.ami}"
-  instance_type = "t2.micro"
-  subnet_id = "${element(split(",", var.subnets), 0)}"
+  instance_type = "${var.instance_type}"
+  subnet_id = "${element(aws_subnet.public_subnets.*.id, count.index)}"
   key_name  = "${var.key_name}"
-  security_groups  = ["${var.sg_all}","${aws_security_group.sg_tools.id}"]
-  user_data = "#!/bin/bash\n/bin/bash <(/usr/bin/wget -qO-
-  https://raw.githubusercontent.com/skyscrapers/bootstrap/master/autobootstrap.sh)
-  -p puppetmaster -h webserver01 -f webserver01.fqdn.com -t \"UTC\""
+  security_groups  = ["${aws_security_group.sg_web.id}"]
+  user_data = "${template_file.metadata_web.rendered}"
 
   root_block_device {
     volume_type = "standard"
-    volume_size = "10"
+    volume_size = "8"
     delete_on_termination = "false"
   }
-  ebs_block_device {
-    device_name = "/dev/sdb"
-    volume_type = "standard"
-    volume_size = "40"
-    delete_on_termination = "false"
-  }
+
   tags {
-    Name = "${var.name}-${var.environment}-tools01"
+    Name = "${var.project}-${var.environment}-web0${count.index + 1}"
     Environment = "${var.environment}"
+    Project = "${var.project}"
   }
+}
+
+resource "template_file" "metadata_web" {
+    filename = "templates/metadata.tpl"
 }
 ```
 
@@ -160,14 +195,14 @@ Up to date versions and on linux use `pip install`
 
 # Safe to use?
 
-Terraform and ansible has `--dry-run`mode
+Terraform and Ansible have a `plan` or `--dry-run` mode
 
 ---
 
 # Performant?
 
-* TF:
-    * Use dependency graph and parrallelizes as much as possible
+* Terraform:
+    * Use dependency graph and parallelizes as much as possible
     * Partial refresh before changes
     * Destroy ordering
 
@@ -179,15 +214,25 @@ Terraform and ansible has `--dry-run`mode
 
 # Do I feel safe
 
-* TF:
-    * Partial State get's stored (eg. sg gets created not the rules, next run will fix this)
+* Terraform:
+    * Partial State get's stored on error (eg. sg gets created not the rules, next run will fix this)
     * Create before destroy
 
+* Cloudformation:
+    * State is stored on AWS
+    * Start to pray when you run it
+    
 ---
 
 # Issues?
 
-* TF: Not yet good working on existing interfaces
+* Terraform:
+    * Not yet good working on existing interfaces
+    * No full coverage of AWS
+
+* Cloudformation:
+    * JSON
+    * No plan mode
 
 ---
 
