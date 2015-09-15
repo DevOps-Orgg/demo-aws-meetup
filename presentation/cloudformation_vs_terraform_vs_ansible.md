@@ -65,14 +65,14 @@ Likes to experiment!
 # [fit] Lets compare
 
 ---
-
+![fit](syntax.jpg)
 # [fit] Simple syntax?
 
 ---
 
 # CloudFormation:
 
-```
+```json
 "web01" : {
   "Type" : "AWS::EC2::Instance",
   "Properties" : {
@@ -193,9 +193,10 @@ Up to date versions and on linux use `pip install`
 
 ---
 
-# Safe to use?
+![fit](safety.jpg)
+# [fit]Safe to use?
 
-Terraform and Ansible have a `plan` or `--dry-run` mode
+### [fit] Terraform and Ansible have a `plan` or `--dry-run` mode
 
 ---
 
