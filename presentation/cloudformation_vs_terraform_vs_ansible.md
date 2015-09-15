@@ -21,13 +21,13 @@ Still likes to get his hands dirty.
 
 ---
 
-# Mattias
+# Mattias Gees
 
 ![left](mattiasgees.jpg)
 
 *Cloud Engineer @skyscrapers*
 
-Likes to experiment.
+Likes to experiment!
 <br>
 ![inline](github.png) [github.com/mattiasgees](https://github.com/mattiasgees)
 ![inline](twitter.png) [twitter.com/mattiasgees](https://twitter.com/mattiasgees)
