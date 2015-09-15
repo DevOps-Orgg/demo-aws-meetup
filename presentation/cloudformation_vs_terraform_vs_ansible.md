@@ -35,7 +35,7 @@ Likes to experiment.
 
 ---
 
-# [fit] Cloudformation
+# [fit] CloudFormation
 # [fit] <> Terraform
 # [fit] <> Ansible
 # [fit] for AWS provisioning
@@ -208,7 +208,7 @@ Terraform and Ansible have a `plan` or `--dry-run` mode
     * Use dependency graph and parallelizes as much as possible
     * Partial refresh before changes
     * Destroy ordering
-    
+
 ---
 
 # How do they keep state?
@@ -217,7 +217,7 @@ Terraform and Ansible have a `plan` or `--dry-run` mode
 
 # Do I feel safe
 
-* Cloudformation:
+* CloudFormation:
     * State is stored on AWS
     * Start to pray when you run it
     * Roll back on fail
@@ -230,7 +230,7 @@ Terraform and Ansible have a `plan` or `--dry-run` mode
 
 # Issues?
 
-* Cloudformation:
+* CloudFormation:
     * JSON
     * No `plan` mode
 
