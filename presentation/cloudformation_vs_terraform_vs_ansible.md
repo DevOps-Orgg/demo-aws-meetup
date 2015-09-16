@@ -181,15 +181,15 @@ resource "template_file" "metadata_web" {
 
 ![left filtered](brew.jpg)
 
-### Macosx has the fantastic brew:
+### Package managers:
 
-* `brew install awscli`
-* `brew install terraform`
-* `brew install ansible`
+* `brew install`
+* `apt-get install`
+* `yum install`
 
 __Warning:__ None are up to date!
 
-Up to date versions and on linux use `pip install`
+Latest versions pip and/or sources
 
 ---
 
@@ -206,7 +206,8 @@ Up to date versions and on linux use `pip install`
 * Terraform:
     * Use dependency graph and parallelizes as much as possible
     * Partial refresh before changes
-* Ansible: Forks? SSH tuning... Not really
+* Ansible:
+    * Forks? SSH tuning... Not really
 
 ---
 ![](map.jpg)
@@ -252,12 +253,18 @@ Up to date versions and on linux use `pip install`
 
 # Do I want to use it?
 
-* Terraform: Destroy ordering, clean and readable, focus on 1 thing 
+* Terraform: Destroy ordering, clean and readable, focus on 1 thing
 * Ansible: It's simple
 * Cloudformation: Who likes JSON?
 
 ---
 
 # Do we recommend 1?
+
+---
+![](question_mark.png)
+# [fit]Questions?
+
+## [fit] Presentation + demo on [github.com/skyscrapers/demo-aws-meetup](https://github.com/skyscrapers/demo-aws-meetup)
 
 ---
