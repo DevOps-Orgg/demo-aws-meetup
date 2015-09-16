@@ -209,7 +209,7 @@ Up to date versions and on linux use `pip install`
 * Ansible: Forks? SSH tuning... Not really
 
 ---
-
+![](map.jpg)
 # How do they keep state?
 
 ---
@@ -238,22 +238,24 @@ Up to date versions and on linux use `pip install`
     * No full coverage of AWS
 
 ---
-
+![](64.png)
 # Legacy projects?
 
 ---
-
-# Support?
+![filtered](support.jpg)
 
 ---
-
+![left](fonzie.jpg)
 # Do you look cool when using it?
 
 ---
 
 # Do I want to use it?
 
-* Destroy ordering
+* Terraform: Destroy ordering, clean and readable, focus on 1 thing 
+* Ansible: It's simple
+* Cloudformation: Who likes JSON?
+
 ---
 
 # Do we recommend 1?
