@@ -44,6 +44,8 @@ Likes to experiment!
 
 # [fit] All different tools
 
+##[fit] and there are many others!
+
 ---
 
 # [fit] All have their advantages
@@ -72,105 +74,20 @@ Likes to experiment!
 
 # CloudFormation:
 
-```json
-"web01" : {
-  "Type" : "AWS::EC2::Instance",
-  "Properties" : {
-    "AvailabilityZone" : "eu-west-1a",
-    "ImageId" : { "Ref" : "imageami" },
-    "InstanceType" : { "Ref" : "webInstanceType" },
-    "KeyName" : { "Ref": "opKeyName"},
-    "SubnetId" : { "Ref" : "PublicSubnet1a" },
-    "BlockDeviceMappings" : [ {
-      "DeviceName" : "/dev/sda1",
-      "Ebs" : {
-        "VolumeType" : "standard",
-        "DeleteOnTermination" : "false",
-        "VolumeSize" : "8"
-      }
-    } ],
-    "Tags" : [
-      {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId" } },
-      {"Key" : "Environment", "Value" : { "Ref" : "environmentType" } },
-      {"Key" : "Project", "Value" : { "Ref" : "projectName" } },
-      {"Key" : "Name", "Value" : { "Fn::Join" : [ "-", [ "web01", { "Ref" : "projectName" }, { "Ref" : "environmentType" }] ] } }
-    ],
-    "SecurityGroupIds" : [ {"Ref" : "sgweb"} ],
-    "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
-      "#!/bin/bash\n",
-      "/usr/bin/logger -t autobootstrap \"Run apt-get update\"\n",
-      "sudo apt-get update\n",
-      "/usr/bin/logger -t autobootstrap \"Install nginx\"\n",
-      "sudo apt-get install nginx -y\n",
-      "/usr/bin/logger -t autobootstrap \"Start nginx\"\n",
-      "sudo service nginx start\n"
-    ]]}}
-  }
-},
-```
+![inline](cloudformation.png)
 
 ---
 
 # Terraform:
 
-```
-resource "aws_instance" "web" {
-  count = "${var.web_nodes}"
-  ami = "${var.ami}"
-  instance_type = "${var.instance_type}"
-  subnet_id = "${element(aws_subnet.public_subnets.*.id, count.index)}"
-  key_name  = "${var.key_name}"
-  security_groups  = ["${aws_security_group.sg_web.id}"]
-  user_data = "${template_file.metadata_web.rendered}"
-
-  root_block_device {
-    volume_type = "standard"
-    volume_size = "8"
-    delete_on_termination = "false"
-  }
-
-  tags {
-    Name = "${var.project}-${var.environment}-web0${count.index + 1}"
-    Environment = "${var.environment}"
-    Project = "${var.project}"
-  }
-}
-
-resource "template_file" "metadata_web" {
-    filename = "templates/metadata.tpl"
-}
-```
+![inline](terraform.png)
 
 ---
 
 # Ansible:
 
-```
- - name: WebServer | Create the WebServer Instance(s)
-   local_action:
-     module: ec2
-     region: "{{ vpc_region }}"
-     group: "{{ web_security_groups[0].sg_name }}"
-     keypair: "{{ key_name }}"
-     instance_type: "{{ web_instance_type }}"
-     image: "{{ imgae_id.ami }}"
-     vpc_subnet_id: "{{ item }}"
-     assign_public_ip: True
-     wait: True
-     wait_timeout: 600
-     user_data: |
-               #!/bin/sh
-               sudo apt-get install nginx -y
-     instance_tags:
-       Name: "{{ vpc_name }}_WEB_Instance"
-       Environment: "{{ ENV }}"
-       Role: "{{ server_role }}"
-       Application: "{{ application }}"
-   with_items:
-      - "{{ public_subnet_1 }}"
-      - "{{ public_subnet_2 }}"
-   register: web
-```
+![inline](ansible.png)
+
 ---
 
 # [fit] Which one was the easiest to read?
@@ -196,35 +113,44 @@ Latest versions pip and/or sources
 ![](safety.jpg)
 # [fit]Safe to use?
 
-### [fit] Terraform and Ansible have a `plan` or `--dry-run` mode
+## [fit] Terraform and Ansible have a __plan__ or __--check__ mode
 
 ---
-![left fit](compiling.png)
-# Performant?
+# Productive?
+
+![fit inline](compiling.png)
+
+---
+
+# It's running ;)
+
 * CloudFormation:
     * Parallelizes as much as possible
 * Terraform:
     * Use dependency graph and parallelizes as much as possible
     * Partial refresh before changes
 * Ansible:
-    * Forks? SSH tuning... Not really
+    * Forks? SSH tuning? 
 
 ---
 ![](map.jpg)
+
 # How do they keep state?
+
+* Cloudformation on AWS
+* Terraform creates a state file
+* Ansible ad hoc state
 
 ---
 
 # Do I feel safe
-
 * CloudFormation:
-    * State is stored on AWS
     * Start to pray when you run it
     * Roll back on fail
-
 * Terraform:
-    * Partial State get's stored on error (eg. sg gets created not the rules, next run will fix this)
+    * Partial State gets stored on error (eg. sg gets created not the rules, next run will fix this)
     * Create before destroy
+* Ansible: Stops on failure
 
 ---
 
@@ -232,20 +158,26 @@ Latest versions pip and/or sources
 
 * CloudFormation:
     * JSON
-    * No `plan` mode
-
+    * No partial run possible
 * Terraform:
-    * Not yet good working on existing interfaces
     * No full coverage of AWS
+* Ansible:
+    * Not every aws module has --dry-run check mode!
 
 ---
+
 ![](64.png)
 # Legacy projects?
+* Cloudformation: [Cloudformer](https://aws.amazon.com/developertools/6460180344805680)
+* Terraform: [Terraforming](https://github.com/dtan4/terraforming)
+* Ansible: Just do it
 
 ---
+
 ![filtered](support.jpg)
 
 ---
+
 ![left](fonzie.jpg)
 # Do you look cool when using it?
 
@@ -259,7 +191,7 @@ Latest versions pip and/or sources
 
 ---
 
-# Do we recommend 1?
+# [fit] Do we recommend 1?
 
 ---
 ![](question_mark.png)
