@@ -1,6 +1,6 @@
 # Create RDS with Subnet,
 resource "aws_db_subnet_group" "rds" {
-  name = "${var.project}-sta${var.environment}ging-rds"
+  name = "${var.project}-${var.environment}-rds"
   description = "Our main group of subnets"
   subnet_ids = ["${aws_subnet.public_subnets.*.id}"]
 }
